@@ -21,7 +21,7 @@ public class NerdDriver {
   private static String mGameID;
   private static RequestQueue mRequestQueue;
   private static ImageLoader mImageLoader;
-  private static String mUrl = "http://flappynerd.net";
+  private static String mUrl = "development.http://flappynerd.net";
   private static Context mCtx;
 
   private NerdDriver(Context ctx){
@@ -48,7 +48,7 @@ public class NerdDriver {
     return mInstance;
   }
 
-  public boolean create(String name){
+  public boolean signin(String name){
 
     JSONObject nerd = new JSONObject();
     try {
@@ -59,7 +59,24 @@ public class NerdDriver {
 
     JsonObjectRequest jsonRequest = new JsonObjectRequest(
         Request.Method.POST,
-        mUrl+"/nerd/create/"+mNerdID,
+        mUrl+"/nerd/signin/"+mNerdID,
+        nerd,
+        new Response.Listener<JSONObject>() {
+          @Override
+          public void onResponse(JSONObject response) {
+            Log.d(TAG, "onResponse: "+response);
+          }
+        },
+        new Response.ErrorListener() {
+          @Override
+          public void onErrorResponse(VolleyError error) {
+            Log.d(TAG, "onErrorResponse: ", error);
+          }
+        }
+    );
+    JsonObjectRequest jsonRequest2 = new JsonObjectRequest(
+        Request.Method.POST,
+        mUrl+"/nerd/name/"+mNerdID,
         nerd,
         new Response.Listener<JSONObject>() {
           @Override
@@ -76,6 +93,7 @@ public class NerdDriver {
     );
 
     mRequestQueue.add(jsonRequest);
+    mRequestQueue.add(jsonRequest2);
 
     return true;
   }
@@ -128,7 +146,7 @@ public class NerdDriver {
 
     JsonObjectRequest jsonRequest = new JsonObjectRequest(
         Request.Method.POST,
-        mUrl+"/game/flap/"+1, //mGameID
+        mUrl+"/game/flap/"+mGameID,
         flap,
         new Response.Listener<JSONObject>() {
           @Override
