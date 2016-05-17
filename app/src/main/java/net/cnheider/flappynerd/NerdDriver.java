@@ -1,4 +1,4 @@
-package com.example.heider.flappynerd;
+package net.cnheider.flappynerd;
 
 import android.content.Context;
 import android.telephony.TelephonyManager;
@@ -47,16 +47,6 @@ public class NerdDriver {
     }
     return mInstance;
   }
-
-  private  <T> void addToRequestQueue(Request<T> req) {
-    getRequestQueue().add(req);
-  }
-
-  private ImageLoader getImageLoader() {
-    return mImageLoader;
-  }
-
-
 
   public boolean create(String name){
 
@@ -157,5 +147,13 @@ public class NerdDriver {
     mRequestQueue.add(jsonRequest);
 
     return true;
+  }
+
+  private  <T> void addToRequestQueue(Request<T> req) {
+    getRequestQueue().add(req);
+  }
+
+  private ImageLoader getImageLoader() {
+    return mImageLoader;
   }
 }
