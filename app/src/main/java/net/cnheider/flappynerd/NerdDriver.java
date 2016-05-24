@@ -21,7 +21,7 @@ public class NerdDriver {
   private static String mGameID;
   private static RequestQueue mRequestQueue;
   private static ImageLoader mImageLoader;
-  private static String mUrl = "development.http://flappynerd.net";
+  private static String mUrl = "http://development.flappynerd.net";
   private static Context mCtx;
 
   private NerdDriver(Context ctx){
@@ -29,7 +29,6 @@ public class NerdDriver {
     mRequestQueue = getRequestQueue();
     TelephonyManager telephonyManager = (TelephonyManager)ctx.getSystemService(Context.TELEPHONY_SERVICE);
     mNerdID = telephonyManager.getDeviceId();
-    mGameID = "1";
   }
 
   private RequestQueue getRequestQueue() {
@@ -75,7 +74,7 @@ public class NerdDriver {
         }
     );
     JsonObjectRequest jsonRequest2 = new JsonObjectRequest(
-        Request.Method.POST,
+        Request.Method.PUT,
         mUrl+"/nerd/name/"+mNerdID,
         nerd,
         new Response.Listener<JSONObject>() {
@@ -103,13 +102,13 @@ public class NerdDriver {
 
     JSONObject json = new JSONObject();
     try {
-      json.put("game_id", game_id);
+      json.put("game_id", Integer.valueOf(game_id));
     } catch (JSONException e) {
       e.printStackTrace();
     }
 
     JsonObjectRequest jsonRequest = new JsonObjectRequest(
-        Request.Method.POST,
+        Request.Method.PUT,
         mUrl+"/nerd/play/"+mNerdID,
         json,
         new Response.Listener<JSONObject>() {
@@ -131,10 +130,40 @@ public class NerdDriver {
     return true;
   }
 
-  public boolean flap(long air_time){
-    if (mGameID == null)
-      return false;
+  public boolean avatar(int avatar_id){
+    JSONObject json = new JSONObject();
+    try {
+      json.put("avatar_url", "https://github.com/cnHeider/FlappyNerd/raw/master/app/src/main/res/mipmap-xxxhdpi/logo"+avatar_id+".png");
+    } catch (JSONException e) {
+      e.printStackTrace();
+    }
 
+    JsonObjectRequest jsonRequest = new JsonObjectRequest(
+        Request.Method.PUT,
+        mUrl+"/nerd/avatar/"+mNerdID,
+        json,
+        new Response.Listener<JSONObject>() {
+          @Override
+          public void onResponse(JSONObject response) {
+            Log.d(TAG, "onResponse: "+response);
+          }
+        },
+        new Response.ErrorListener() {
+          @Override
+          public void onErrorResponse(VolleyError error) {
+            Log.d(TAG, "onErrorResponse: ", error);
+          }
+        }
+    );
+
+    mRequestQueue.add(jsonRequest);
+
+    return true;
+  }
+
+  public boolean flap(long air_time){
+    if (mGameID == "")
+      return false;
 
     JSONObject flap = new JSONObject();
     try {

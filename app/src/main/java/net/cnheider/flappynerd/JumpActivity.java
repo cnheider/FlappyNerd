@@ -25,6 +25,7 @@ public class JumpActivity extends Activity implements SensorEventListener {
   private SensorManager mSensorManager;
   private Sensor mSensorAccelerometer;
   private TextView mTextViewNerdName;
+  private TextView mTextViewGamePin;
   private ImageButton mImageButtonLogo;
 
   private long startTime = 0;
@@ -35,6 +36,7 @@ public class JumpActivity extends Activity implements SensorEventListener {
   private static final int SHAKE_THRESHOLD = 15;
 
   private String mNerdName;
+  private String mGamePin;
   private int mResId;
 
   public static Intent newIntent(Context packageContext, String nerdName, String gamePin, int resId){
@@ -50,8 +52,9 @@ public class JumpActivity extends Activity implements SensorEventListener {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_pocket);
 
-    mNerdName = (String) getIntent().getSerializableExtra(EXTRA_NERD_NAME);
-    mResId = (int) getIntent().getSerializableExtra(EXTRA_IMAGE_ID);
+    mNerdName = getIntent().getStringExtra(JumpActivity.EXTRA_NERD_NAME);
+    mGamePin = getIntent().getStringExtra(JumpActivity.EXTRA_GAME_PIN);
+    mResId = getIntent().getIntExtra(JumpActivity.EXTRA_IMAGE_ID,0);
 
     mImageButtonLogo = (ImageButton) findViewById(R.id.imageButtonLogo2);
     mImageButtonLogo.setBackground(getResources().getDrawable(mResId));
@@ -62,10 +65,14 @@ public class JumpActivity extends Activity implements SensorEventListener {
       }
     });
 
-    mTextViewNerdName = (TextView) findViewById(R.id.textView_NerdName);
     Typeface typeface = Typeface.createFromAsset(getAssets(), "PixelFont.ttf");
+    mTextViewNerdName = (TextView) findViewById(R.id.textView_NerdName);
     mTextViewNerdName.setTypeface(typeface);
     mTextViewNerdName.setText(mNerdName);
+
+    mTextViewGamePin = (TextView) findViewById(R.id.textView_GamePin);
+    mTextViewGamePin.setTypeface(typeface);
+    mTextViewGamePin.setText(mGamePin);
 
 
     View decorView = getWindow().getDecorView();
@@ -101,9 +108,9 @@ public class JumpActivity extends Activity implements SensorEventListener {
     Sensor mySensor = event.sensor;
     if(mySensor.getType() == Sensor.TYPE_ACCELEROMETER){
       //accelerations along the axis
-      float x = event.values[0];
+      //float x = event.values[0];
       float y = event.values[1];
-      float z = event.values[2];
+      //float z = event.values[2];
 
       if(SystemClock.uptimeMillis() - startTime < 1500) {
         if(y > SHAKE_THRESHOLD && !goingUp) {
@@ -131,15 +138,11 @@ public class JumpActivity extends Activity implements SensorEventListener {
           startTime = SystemClock.uptimeMillis();
           Log.d(TAG, "airtime: " + airTime);
           try {
-
             NerdDriver.getInstance(this).flap(airTime);
-
-
             Log.d("Flap", "Score sent");
           }
           catch(Exception e){
             e.printStackTrace();
-
           }
           Log.d("Flap", "Method finished");
         }
@@ -154,6 +157,6 @@ public class JumpActivity extends Activity implements SensorEventListener {
   }
   @Override
   public void onAccuracyChanged(Sensor sensor, int accuracy) {
-
+    // Nothing
   }
 }
