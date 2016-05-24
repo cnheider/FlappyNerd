@@ -1,4 +1,4 @@
-package com.example.heider.flappynerd;
+package net.cnheider.flappynerd;
 
 import org.junit.Test;
 
