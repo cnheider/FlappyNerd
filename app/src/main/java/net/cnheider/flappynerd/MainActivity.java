@@ -1,4 +1,4 @@
-package com.example.heider.flappynerd;
+package net.cnheider.flappynerd;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -22,9 +22,9 @@ public class MainActivity extends Activity {
 
   private NerdDriver mNerdDriver;
 
-  private String mNerdName;
-  private String mGamePin;
-  private int mImageId;
+  private String mNerdName="Anonymous";
+  private String mGamePin="1";
+  private int mImageId=0;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +48,6 @@ public class MainActivity extends Activity {
           }
         });
 
-    mNerdName = "";
     mNameEditText= (EditText) findViewById(R.id.NameEditText);
     Typeface typeface = Typeface.createFromAsset(getAssets(), "PixelFont.ttf");
     mNameEditText.setTypeface(typeface);
@@ -72,7 +71,6 @@ public class MainActivity extends Activity {
       mNerdName = "Anonymous";
     }
 
-    mGamePin = "";
     mGameEditText= (EditText) findViewById(R.id.GameEditText);
     mGameEditText.setTypeface(typeface);
     mNameEditText.addTextChangedListener(
@@ -92,7 +90,7 @@ public class MainActivity extends Activity {
         });
 
     if(mGamePin.equals("") || mNerdName == null){
-      mGamePin = "meh";
+      mGamePin = "1";
     }
 
     mImageButton = (ImageButton) findViewById(R.id.imageButton);
@@ -102,11 +100,10 @@ public class MainActivity extends Activity {
           public void onClick(View v) {
             mImageButton.setBackgroundResource(R.mipmap.button_on);
             try {
+              mNerdDriver.signin(mNerdName);
+              mNerdDriver.join(mGamePin);
               Intent intent = JumpActivity.newIntent(getApplicationContext(), mNerdName, mGamePin, mImageId);
               startActivity(intent);
-
-              //mNerdDriver.create(mNerdName);
-              mNerdDriver.join(mGamePin);
               Log.d(TAG, "Log in request");
             } catch(Exception e){
               Log.d(TAG, e.getStackTrace().toString());
@@ -121,6 +118,7 @@ public class MainActivity extends Activity {
 
   public int getLogoResId(){
     int logoNumber =  1 + (int)(Math.random() * 16);
+    mNerdDriver.avatar(logoNumber);
     Log.d("Flap", "" + logoNumber);
     String logoString = "logo" + logoNumber;
     Log.d("Flap",  logoString);
